@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Landmark, Trash2 } from "lucide-react";
 import { supabase } from "../../supabase";
 
 export default function AccountCard({ account, onDelete, onUpdated }) {
@@ -22,7 +23,7 @@ export default function AccountCard({ account, onDelete, onUpdated }) {
     <div style={s.card}>
       <div style={s.top}>
         <div style={s.iconWrap}>
-          <span style={s.icon}>🏦</span>
+          <Landmark className="size-5 text-blue-600" />
         </div>
         <div style={s.info}>
           <p style={s.name}>{account.name}</p>
@@ -39,7 +40,9 @@ export default function AccountCard({ account, onDelete, onUpdated }) {
           <button onClick={() => setEditing(v => !v)} style={s.editBtn}>
             {editing ? "Cancel" : "Edit"}
           </button>
-          <button onClick={() => onDelete(account.id)} style={s.delBtn}>🗑️</button>
+          <button onClick={() => onDelete(account.id)} style={s.delBtn} aria-label={`Delete ${account.name}`}>
+            <Trash2 className="size-4 text-slate-400 hover:text-red-500" />
+          </button>
         </div>
       </div>
 
@@ -68,7 +71,6 @@ const s = {
   card:      { background:"#F8FAFC", borderRadius:"12px", padding:"14px", marginBottom:"10px", border:"1px solid #E2E8F0" },
   top:       { display:"flex", alignItems:"flex-start", gap:"12px" },
   iconWrap:  { width:"40px", height:"40px", background:"#EFF6FF", borderRadius:"10px", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 },
-  icon:      { fontSize:"1.2rem" },
   info:      { flex:1 },
   name:      { margin:"0 0 2px", fontWeight:"700", color:"#1A2E44", fontSize:"0.95rem" },
   balance:   { margin:"0 0 2px", color:"#2563EB", fontWeight:"700", fontSize:"1.1rem" },

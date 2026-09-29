@@ -1,76 +1,69 @@
 import { useState } from "react";
-import EntryItem   from "../entry/EntryItem";
+import { ArrowLeft, NotebookPen, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
+import EntryItem    from "../entry/EntryItem";
 import AddEntryForm from "../entry/AddEntryForm";
 
-export default function BottomSheet({ day, month, year, entries, accounts, onClose, onAdd, onDelete }) {
-  const [showForm, setShowForm] = useState(false);
-  const date = new Date(year, month - 1, day);
-  const dateStr = date.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long" });
-  const total = entries.filter(e => !e.is_income).reduce((s, e) => s + e.amount, 0);
-  const income = entries.filter(e => e.is_income).reduce((s, e) => s + e.amount, 0);
+const sum = (list) => list.reduce((s, e) => s + e.amount, 0);
 
-  const handleAdd = (form) => {
-    onAdd(form);
-    setShowForm(false);
-  };
+export default function BottomSheet({ day, month, year, entries, accounts, onClose, onAdd, onDelete }) {
+  const [adding, setAdding] = useState(false);
+  const date    = new Date(year, month - 1, day);
+  const title   = date.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  const spent   = sum(entries.filter(e => !e.is_income));
 
   return (
-    <>
-      {/* overlay */}
-      <div onClick={onClose} style={s.overlay} />
+    <Sheet open onOpenChange={(open) => { if (!open) onClose(); }}>
+      <SheetContent aria-describedby={undefined}>
 
-      {/* sheet */}
-      <div style={s.sheet}>
-
-        {/* handle */}
-        <div style={s.handle} />
-
-        {/* header */}
-        <div style={s.head}>
-          <div>
-            <p style={s.dateStr}>{dateStr}</p>
-            <div style={s.summaryRow}>
-              {total > 0  && <span style={s.expense}>-฿{total.toLocaleString()}</span>}
-              {income > 0 && <span style={s.incomeTag}>+฿{income.toLocaleString()}</span>}
-            </div>
-          </div>
-          <button onClick={() => setShowForm(v => !v)} style={s.addBtn}>
-            {showForm ? "✕" : "+ Add"}
-          </button>
-        </div>
-
-        {/* form */}
-        {showForm && <AddEntryForm accounts={accounts} onSave={handleAdd} />}
-
-        {/* entries */}
-        <div style={s.entries}>
-          {entries.length === 0 && !showForm && (
-            <div style={s.empty}>
-              <span style={s.emptyEmoji}>📝</span>
-              <p>No entries yet. Tap "+ Add" to log something!</p>
-            </div>
+        <header className="flex items-center gap-2 px-5 pt-3 pb-3">
+          {adding && (
+            <Button type="button" variant="ghost" size="icon-sm" onClick={() => setAdding(false)} aria-label="Back to day">
+              <ArrowLeft />
+            </Button>
           )}
-          {entries.map(e => (
-            <EntryItem key={e.id} entry={e} accounts={accounts} onDelete={onDelete} />
-          ))}
-        </div>
+          <div className="min-w-0 flex-1">
+            <SheetTitle className="!text-lg !leading-tight !text-[#1A2E44]">{adding ? "New entry" : title}</SheetTitle>
+            <SheetDescription className={adding ? "mt-1 text-[#1A2E44]" : "mt-1"}>{adding ? title : `${entries.length} ${entries.length === 1 ? "entry" : "entries"}`}</SheetDescription>
+          </div>
+        </header>
 
-      </div>
-    </>
+        {adding ? (
+          <AddEntryForm accounts={accounts} onSave={onAdd} />
+        ) : (
+          <>
+            {/* day summary */}
+            <div className="mx-5 mb-3 flex items-baseline justify-between rounded-2xl bg-rose-50 px-4 py-2.5">
+              <p className="text-sm text-rose-700/80">Spent today</p>
+              <p className="text-xl font-bold tabular-nums text-rose-600">฿{spent.toLocaleString()}</p>
+            </div>
+
+            {/* entries */}
+            <div className="min-h-0 flex-1 overflow-y-auto px-5">
+              {entries.length === 0 ? (
+                <div className="py-8 text-center text-muted-foreground">
+                  <NotebookPen className="mx-auto mb-2 size-10 opacity-60" />
+                  <p className="text-sm">Nothing logged for this day yet.</p>
+                </div>
+              ) : (
+                <ul className="divide-y">
+                  {entries.map(e => (
+                    <EntryItem key={e.id} entry={e} accounts={accounts} onDelete={onDelete} />
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <Button type="button" size="lg" className="h-11 w-full rounded-xl text-base font-semibold" onClick={() => setAdding(true)}>
+                <Plus /> Add entry
+              </Button>
+            </div>
+          </>
+        )}
+
+      </SheetContent>
+    </Sheet>
   );
 }
-
-const s = {
-  overlay:    { position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:200 },
-  sheet:      { position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)", width:"100%", maxWidth:"480px", background:"#fff", borderRadius:"20px 20px 0 0", padding:"12px 20px 32px", zIndex:201, maxHeight:"80vh", overflowY:"auto" },
-  handle:     { width:"40px", height:"4px", background:"#E2E8F0", borderRadius:"2px", margin:"0 auto 16px" },
-  head:       { display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:"12px" },
-  dateStr:    { margin:"0 0 4px", fontWeight:"700", color:"#1A2E44", fontSize:"1rem" },
-  summaryRow: { display:"flex", gap:"8px" },
-  expense:    { fontSize:"0.85rem", fontWeight:"700", color:"#EF4444" },
-  incomeTag:  { fontSize:"0.85rem", fontWeight:"700", color:"#10B981" },
-  addBtn:     { padding:"8px 16px", background:"#2563EB", color:"#fff", border:"none", borderRadius:"8px", cursor:"pointer", fontWeight:"600", fontSize:"0.85rem" },
-  entries:    { marginTop:"8px" },
-  empty:      { textAlign:"center", padding:"24px", color:"#9CA3AF" },
-  emptyEmoji: { fontSize:"2rem", display:"block", marginBottom:"8px" },
-};

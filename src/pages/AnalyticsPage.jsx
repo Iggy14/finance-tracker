@@ -13,11 +13,9 @@ const s = {
     maxWidth: '480px',
     margin: '0 auto',
     paddingBottom: '80px',
-    background: '#F9FAFB',
     minHeight: '100vh',
   },
   hero: {
-    background: 'linear-gradient(135deg, #1A2E44 0%, #2563EB 100%)',
     padding: '24px 16px 28px',
     color: '#fff',
   },
@@ -25,6 +23,8 @@ const s = {
     fontSize: '22px',
     fontWeight: '800',
     marginBottom: '12px',
+    textAlign: 'center',
+    color: '#1A2E44',
   },
   monthNav: {
     display: 'flex',

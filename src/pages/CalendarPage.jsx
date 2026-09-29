@@ -1,41 +1,46 @@
-import { useState, useEffect }  from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase }             from "../supabase";
-import BalanceHeader            from "../components/calendar/BalanceHeader";
+import BalanceCard              from "../components/calendar/BalanceCard";
 import CalendarGrid             from "../components/calendar/CalendarGrid";
 import BottomSheet              from "../components/calendar/BottomSheet";
+import MiniSheet                from "../components/calendar/MiniSheet";
+
+const dateOf = (y, m, d) =>
+  `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
 export default function CalendarPage({ user }) {
   const today        = new Date();
   const [year,  setYear]  = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [accounts,  setAccounts]  = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
   const [entries,   setEntries]   = useState([]);
   const [activeDay, setActiveDay] = useState(null);
 
-  useEffect(() => { fetchAccounts(); }, []);
-  useEffect(() => { fetchEntries();  }, [year, month]);
-
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     const { data } = await supabase
       .from("accounts").select("*").eq("user_id", user.id);
-    setAccounts(data || []);
-  };
+    return data || [];
+  }, [user.id]);
 
-  const fetchEntries = async () => {
+  const fetchEntries = useCallback(async () => {
     const from = `${year}-${String(month).padStart(2,"0")}-01`;
-    const to   = `${year}-${String(month).padStart(2,"0")}-31`;
+    const to   = dateOf(year, month, new Date(year, month, 0).getDate());
     const { data } = await supabase
       .from("entries").select("*")
       .eq("user_id", user.id)
       .gte("date", from).lte("date", to);
-    setEntries(data || []);
-  };
+    return data || [];
+  }, [user.id, year, month]);
 
-  const addEntry = async (form) => {
-    const day  = String(activeDay).padStart(2, "0");
-    const mon  = String(month).padStart(2, "0");
-    const date = `${year}-${mon}-${day}`;
-    const { data } = await supabase.from("entries").insert({
+  const refreshAccounts = async () => setAccounts(await fetchAccounts());
+  const refreshEntries  = async () => setEntries(await fetchEntries());
+
+  useEffect(() => { fetchAccounts().then(list => { setAccounts(list); setAccountsLoading(false); }); }, [fetchAccounts]);
+  useEffect(() => { fetchEntries().then(setEntries);   }, [fetchEntries]);
+
+  const addEntry = async (form, date = dateOf(year, month, activeDay)) => {
+    await supabase.from("entries").insert({
       ...form, user_id: user.id, date,
     }).select().single();
 
@@ -48,9 +53,12 @@ export default function CalendarPage({ user }) {
       await supabase.from("accounts").update({ balance: newBalance }).eq("id", acc.id);
     }
 
-    fetchEntries();
-    fetchAccounts();
+    refreshEntries();
+    refreshAccounts();
   };
+
+  const addMoney = (form) =>
+    addEntry(form, dateOf(today.getFullYear(), today.getMonth() + 1, today.getDate()));
 
   const deleteEntry = async (id) => {
     const entry = entries.find(e => e.id === id);
@@ -64,8 +72,8 @@ export default function CalendarPage({ user }) {
       }
     }
     await supabase.from("entries").delete().eq("id", id);
-    fetchEntries();
-    fetchAccounts();
+    refreshEntries();
+    refreshAccounts();
   };
 
   // group entries by day number
@@ -85,7 +93,7 @@ export default function CalendarPage({ user }) {
   return (
     <div style={s.page}>
 
-      <BalanceHeader accounts={accounts} />
+      <BalanceCard accounts={accounts} loading={accountsLoading} onAddMoney={addMoney} />
 
       {/* month navigator */}
       <div style={s.nav}>
@@ -111,6 +119,8 @@ export default function CalendarPage({ user }) {
         onDayTap={setActiveDay}
       />
 
+      <MiniSheet user={user} />
+
       {activeDay && (
         <BottomSheet
           day={activeDay} month={month} year={year}
@@ -126,7 +136,7 @@ export default function CalendarPage({ user }) {
 }
 
 const s = {
-  page:       { minHeight:"100vh", background:"#F8FAFC" },
+  page:       { position:"relative" },
   nav:        { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 20px 4px" },
   navBtn:     { background:"none", border:"none", fontSize:"1.5rem", cursor:"pointer", color:"#2563EB", fontWeight:"700", padding:"0 8px" },
   navTitle:   { fontWeight:"800", color:"#1A2E44", fontSize:"1.1rem" },

@@ -6,6 +6,7 @@ import BottomNav from "./components/layout/BottomNav.jsx";
 import CalendarPage from "./pages/CalendarPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SettingsPage from "./pages/SettingsPage";
+import AppShell from "./components/layout/AppShell";
 
 export default function App() {
   const [user,    setUser]    = useState(null);
@@ -23,24 +24,26 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div style={s.loading}>Loading...</div>;
-  if (!user)   return <Auth />;
+  if (loading) {
+    return (
+      <AppShell>
+        <div className="flex min-h-svh items-center justify-center text-lg text-slate-600">
+          Loading...
+        </div>
+      </AppShell>
+    );
+  }
+  if (!user) return <Auth />;
 
   return (
-    <div style={s.app}>
+    <AppShell>
       <Navbar user={user} />
-      <div style={s.content}>
+      <div className="relative pt-1 pb-[110px]">
         {page === "calendar"   && <CalendarPage  user={user} />}
         {page === "analytics"  && <AnalyticsPage user={user} />}
         {page === "settings"   && <SettingsPage  user={user} />}
       </div>
       <BottomNav page={page} setPage={setPage} />
-    </div>
+    </AppShell>
   );
 }
-
-const s = {
-  app:     { fontFamily:"'Segoe UI', sans-serif", background:"#F8FAFC", minHeight:"100vh", width:"100%", maxWidth:"480px", margin:"0 auto", position:"relative", boxShadow:"0 0 40px rgba(0,0,0,0.1)" },
-  content: { paddingBottom:"70px", paddingTop:"4px" },
-  loading: { display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", color:"#6B7280", fontSize:"1.2rem" },
-};

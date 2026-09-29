@@ -12,7 +12,7 @@ A mobile-first personal finance app to track daily expenses across multiple bank
 - **Day Detail Sheet** — tap any day to view, add, or delete entries with a smooth bottom sheet
 - **Multiple Accounts** — manage separate bank accounts (e.g. KBank for daily, SCB for savings)
 - **Category Tracking** — 8 categories: Food & Drink, Pet, Clothing, Rent & Bills, Transport, Health, Entertainment, Others
-- **Monthly Budget** — set a daily budget and monthly rent per account
+- **Monthly Budget** — set a daily budget per account
 - **Analytics Dashboard** — summary cards, spending pie chart, monthly bar chart, and daily food spend vs budget line chart
 - **Google Auth** — sign in with one click, all data is private per user
 - **Real-time Sync** — expenses save instantly to Supabase PostgreSQL
@@ -93,12 +93,11 @@ src/
 │   │   └── BottomNav.jsx         ← bottom tab navigation
 │   └── settings/
 │       ├── AccountCard.jsx       ← account display + edit
-│       ├── AddAccountForm.jsx    ← create new account
-│       └── RentSetting.jsx       ← monthly rent configuration
+│       └── AddAccountForm.jsx    ← create new account
 ├── pages/
 │   ├── CalendarPage.jsx          ← main calendar view
 │   ├── AnalyticsPage.jsx         ← charts and stats
-│   └── SettingsPage.jsx          ← account and rent settings
+│   └── SettingsPage.jsx          ← account settings
 ├── utils/
 │   ├── calculations.js           ← balance and budget logic
 │   └── categories.js             ← category definitions
@@ -112,7 +111,6 @@ src/
 
 ```
 accounts         — id, user_id, name, balance, budget_per_day, created_at
-monthly_settings — id, user_id, month, year, rent, account_id, created_at
 entries          — id, user_id, date, item, amount, category, account_id, is_income, note, created_at
 ```
 
