@@ -4,6 +4,7 @@ import BalanceCard              from "../components/calendar/BalanceCard";
 import CalendarGrid             from "../components/calendar/CalendarGrid";
 import BottomSheet              from "../components/calendar/BottomSheet";
 import MiniSheet                from "../components/calendar/MiniSheet";
+import { sortAccounts }         from "../utils/accounts";
 
 const dateOf = (y, m, d) =>
   `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
@@ -20,7 +21,7 @@ export default function CalendarPage({ user }) {
   const fetchAccounts = useCallback(async () => {
     const { data } = await supabase
       .from("accounts").select("*").eq("user_id", user.id);
-    return data || [];
+    return sortAccounts(data || []);
   }, [user.id]);
 
   const fetchEntries = useCallback(async () => {

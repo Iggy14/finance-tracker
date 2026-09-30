@@ -2,16 +2,12 @@ import { useState } from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PRIORITY, sortAccounts } from "@/utils/accounts";
 import AddMoneyDialog from "./AddMoneyDialog";
 
-// Display order: KBank is the primary card, SCB is one swipe away, anything else follows.
-const PRIORITY = [/k[\s-]?bank|kasikorn/i, /scb|siam commercial/i];
+// KBank is the primary card, SCB is one swipe away, anything else follows.
 const nameColor = (name) =>
   PRIORITY[0].test(name) ? "text-green-700" : PRIORITY[1].test(name) ? "text-purple-700" : "text-white/80";
-const rank = (name) => {
-  const i = PRIORITY.findIndex((re) => re.test(name));
-  return i === -1 ? PRIORITY.length : i;
-};
 
 function Card({ account, onAddMoney }) {
   const negative = account.balance < 0;
@@ -55,7 +51,7 @@ function CardSkeleton() {
 export default function BalanceCard({ accounts, loading, onAddMoney }) {
   const [active, setActive] = useState(0);
   if (loading) return <CardSkeleton />;
-  const sorted = [...accounts].sort((a, b) => rank(a.name) - rank(b.name));
+  const sorted = sortAccounts(accounts);
   if (!sorted.length) return null;
 
   const onScroll = (e) => {

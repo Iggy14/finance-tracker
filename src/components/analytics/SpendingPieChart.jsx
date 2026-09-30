@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { DEFAULT_CATEGORY } from '../../utils/categories';
 
 const COLORS = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#6B7280'];
 
@@ -25,7 +26,8 @@ const s = {
 };
 
 export default function SpendingPieChart({ entries }) {
-  const expenses = entries.filter(e => !e.is_income);
+  // "Others" has no specific name, so it's left out of the chart
+  const expenses = entries.filter(e => !e.is_income && e.category !== DEFAULT_CATEGORY);
 
   const categoryTotals = {};
   expenses.forEach(e => {

@@ -29,7 +29,7 @@ export default function CalendarGrid({ year, month, entriesByDay, accounts, onDa
         {days.map((day, i) => {
           const entries  = day ? (entriesByDay[day] || []) : [];
           const isToday  = day === today.getDate() && month === today.getMonth() + 1 && year === today.getFullYear();
-          const color    = day ? dotColor(entries, budget) : null;
+          const color    = day ? dotColor(entries, budget, foodAccount?.id) : null;
           return (
             <DayCell
               key={i}

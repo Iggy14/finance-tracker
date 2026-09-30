@@ -17,9 +17,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-svh bg-sky-200">
-      <main className="relative mx-auto flex min-h-svh w-full max-w-[430px] flex-col overflow-hidden bg-[#e8ecf1] px-6 pb-16 text-left text-slate-950">
-        <div className="relative -mx-6 h-[58svh] shrink-0 bg-gradient-to-b from-sky-500 via-sky-300 via-50% to-[#e8ecf1]">
+    <div className="fixed inset-0 touch-none overflow-hidden overscroll-none bg-sky-200 select-none">
+      <main className="relative mx-auto flex h-full w-full max-w-[430px] flex-col overflow-hidden bg-[#e8ecf1] px-6 pb-[max(2rem,env(safe-area-inset-bottom))] text-left text-slate-950">
+        <div className="relative -mx-6 min-h-0 flex-1 overflow-hidden bg-gradient-to-b from-sky-500 via-sky-300 via-50% to-[#e8ecf1]">
           <img
             src="/images/auth/credit-card.png"
             alt=""
@@ -51,7 +51,7 @@ export default function Auth() {
             onClick={login}
             disabled={busy}
             size="lg"
-            className="mt-10 h-14 w-full rounded-2xl bg-slate-950 text-base font-medium text-white hover:bg-slate-800"
+            className="mt-8 h-14 w-full rounded-2xl bg-slate-950 text-base font-medium text-white hover:bg-slate-800"
           >
             {busy ? (
               <Spinner data-icon="inline-start" />

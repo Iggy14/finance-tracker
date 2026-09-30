@@ -11,7 +11,7 @@ A mobile-first personal finance app to track daily expenses across multiple bank
 - **Calendar View** — see daily expenses laid out on a monthly calendar with colored category dots
 - **Day Detail Sheet** — tap any day to view, add, or delete entries with a smooth bottom sheet
 - **Multiple Accounts** — manage separate bank accounts (e.g. KBank for daily, SCB for savings)
-- **Category Tracking** — 8 categories: Food & Drink, Pet, Clothing, Rent & Bills, Transport, Health, Entertainment, Others
+- **Category Tracking** — 8 categories: Food & Drink, Pet, Groceries, Rent & Bills, Transport, Skin & Health, Entertainment, Others
 - **Monthly Budget** — set a daily budget per account
 - **Analytics Dashboard** — summary cards, spending pie chart, monthly bar chart, and daily food spend vs budget line chart
 - **Google Auth** — sign in with one click, all data is private per user

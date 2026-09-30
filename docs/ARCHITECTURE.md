@@ -48,7 +48,7 @@ finance-tracker/
 ├── .env / .env.example     # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
 ├── public/                 # static assets; images live in public/images/<section>/ (see §3.5)
 │   ├── manifest.webmanifest
-│   └── images/app-icons/   # favicon, apple-touch-icon, PWA icons
+│   └── images/app-icons/   # favicon, apple-touch-icon, PWA icons (all generated from iggy-logo.jpg)
 └── src/
     ├── main.jsx            # createRoot + <StrictMode><App/>
     ├── App.jsx             # auth gate + tab "router"
@@ -177,7 +177,7 @@ auth.users 1 ──< accounts 1 ──< entries
 
 ### Categories (`utils/categories.js`)
 
-Food & Drink, Pet, Clothing, Rent & Bills, Transport, Health, Entertainment, Others. Each has a key, a lucide `icon` component, and a chart color. The app uses lucide icons instead of emojis. This is the single source of truth for the entry form and the charts.
+Food & Drink, Pet, Groceries, Rent & Bills, Transport, Skin & Health, Entertainment, Others. Each has a key, a lucide `icon` component, and a chart color. The app uses lucide icons instead of emojis. This is the single source of truth for the entry form and the charts.
 
 ---
 

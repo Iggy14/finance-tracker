@@ -12,8 +12,6 @@ const s = {
   page: {
     maxWidth: '480px',
     margin: '0 auto',
-    paddingBottom: '80px',
-    minHeight: '100vh',
   },
   hero: {
     padding: '24px 16px 28px',
@@ -127,7 +125,7 @@ export default function AnalyticsPage({ user }) {
         <div style={s.section}>
           <SummaryCards entries={entries} accounts={accounts} />
           <SpendingPieChart entries={entries} />
-          <DailyLineChart entries={entries} month={month} year={year} />
+          <DailyLineChart entries={entries} accounts={accounts} month={month} year={year} />
           <MonthlyBarChart user={user} />
         </div>
       )}

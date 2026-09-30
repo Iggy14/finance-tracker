@@ -1,3 +1,6 @@
+import { countsTowardBudget } from '../../utils/calculations';
+import { DEFAULT_CATEGORY } from '../../utils/categories';
+
 const s = {
   grid: {
     display: 'grid',
@@ -38,11 +41,18 @@ export default function SummaryCards({ entries, accounts }) {
   const daysWithSpend = [...new Set(expenses.map(e => e.date))].length;
   const avgPerDay = daysWithSpend > 0 ? totalSpent / daysWithSpend : 0;
 
-  const savingsAccount = accounts.find(a => a.name === 'SCB') || accounts[1];
-  const savingsBalance = savingsAccount ? savingsAccount.balance : 0;
+  // days where Food & Drink paid from the budget account (KBank) exceeded the daily budget
+  const budgetAccount = accounts.find(a => a.budget_per_day > 0);
+  const budget = budgetAccount?.budget_per_day || 170;
+  const foodByDay = {};
+  expenses.filter(e => countsTowardBudget(e, budgetAccount?.id)).forEach(e => {
+    foodByDay[e.date] = (foodByDay[e.date] || 0) + e.amount;
+  });
+  const daysOver = Object.values(foodByDay).filter(total => total > budget).length;
 
   const categoryTotals = {};
-  expenses.forEach(e => {
+  // "Others" has no specific name, so it can't be the top category
+  expenses.filter(e => e.category !== DEFAULT_CATEGORY).forEach(e => {
     categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount;
   });
   const biggestCategory = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
@@ -50,7 +60,7 @@ export default function SummaryCards({ entries, accounts }) {
   const cards = [
     { label: 'Total Spent', value: `฿${totalSpent.toLocaleString()}`, sub: 'this month', accent: '#EF4444' },
     { label: 'Avg / Day', value: `฿${Math.round(avgPerDay).toLocaleString()}`, sub: 'on spending days', accent: '#2563EB' },
-    { label: 'Savings Balance', value: `฿${savingsBalance.toLocaleString()}`, sub: savingsAccount?.name || 'SCB', accent: '#10B981' },
+    { label: 'Days Over Budget', value: String(daysOver), sub: `over ฿${budget.toLocaleString()}/day budget`, accent: '#10B981' },
     { label: 'Top Category', value: biggestCategory ? biggestCategory[0] : '—', sub: biggestCategory ? `฿${biggestCategory[1].toLocaleString()}` : 'no data', accent: '#F59E0B' },
   ];
 

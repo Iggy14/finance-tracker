@@ -61,7 +61,7 @@ export default function SheetGrid({ cells, onChange }) {
                       onBlur={() => setEditing(null)}
                       onChange={(e) => onChange(key, e.target.value)}
                       className={cn(
-                        "h-9 w-full bg-transparent px-1.5 text-right text-blue-900 outline-none focus:bg-sky-50 focus:ring-2 focus:ring-inset focus:ring-sky-500",
+                        "h-9 w-full bg-transparent px-1.5 text-base text-right text-blue-900 outline-none focus:bg-sky-50 focus:ring-2 focus:ring-inset focus:ring-sky-500",
                         editing !== key && isError(values[key]) && "text-red-600",
                         editing !== key && typeof values[key] === "string" && !isError(values[key]) && "text-left"
                       )}

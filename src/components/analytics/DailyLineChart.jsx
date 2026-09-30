@@ -1,3 +1,4 @@
+import { countsTowardBudget } from '../../utils/calculations';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 
 const BUDGET = 170;
@@ -47,9 +48,10 @@ const s = {
   }),
 };
 
-export default function DailyLineChart({ entries, month, year }) {
-  // Only Food & Drink category expenses
-  const foodExpenses = entries.filter(e => !e.is_income && e.category === 'Food & Drink');
+export default function DailyLineChart({ entries, accounts, month, year }) {
+  // Only Food & Drink expenses paid from the budget account (KBank)
+  const budgetAccountId = accounts.find(a => a.budget_per_day > 0)?.id;
+  const foodExpenses = entries.filter(e => !e.is_income && countsTowardBudget(e, budgetAccountId));
 
   const dailyTotals = {};
   foodExpenses.forEach(e => {

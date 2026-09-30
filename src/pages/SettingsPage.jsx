@@ -90,7 +90,7 @@ export default function SettingsPage({ user }) {
 }
 
 const s = {
-  page:        { minHeight:"100vh" },
+  page:        {},
   hero:        { padding:"24px 20px 28px" },
   title:       { margin:"0 0 4px", color:"#1A2E44", fontSize:"1.6rem", fontWeight:"800", textAlign:"center" },
   sub:         { margin:0, color:"#E0F2FE", fontSize:"0.85rem", textAlign:"center" },

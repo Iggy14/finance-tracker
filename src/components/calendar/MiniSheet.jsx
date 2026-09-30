@@ -57,7 +57,7 @@ export default function MiniSheet({ user }) {
         />
       </div>
 
-      <div className="flex justify-end px-4 pb-2 pt-3">
+      <div className="flex justify-end px-4 pb-2 pt-0">
         <button
           type="button"
           aria-label={open ? "Close mini sheet" : "Open mini sheet"}

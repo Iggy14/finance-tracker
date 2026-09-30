@@ -7,9 +7,14 @@ export function dailyTotal(entries) {
     .reduce((sum, e) => sum + e.amount, 0);
 }
 
-// dot color for calendar cell — only Food & Drink expenses count toward the budget
-export function dotColor(entries, budgetPerDay) {
-  const foodEntries = entries.filter(e => e.category === BUDGET_CATEGORY);
+// an entry counts toward the daily budget only if it is Food & Drink AND paid from the budget account (KBank)
+export function countsTowardBudget(entry, budgetAccountId) {
+  return entry.category === BUDGET_CATEGORY && entry.account_id === budgetAccountId;
+}
+
+// dot color for calendar cell — only Food & Drink paid from the budget account counts
+export function dotColor(entries, budgetPerDay, budgetAccountId) {
+  const foodEntries = entries.filter(e => countsTowardBudget(e, budgetAccountId));
   if (!foodEntries.length) return null;
   const total = dailyTotal(foodEntries);
   if (total <= budgetPerDay)  return "#10B981"; // green
@@ -39,13 +44,13 @@ export function monthlyTotals(entries) {
 }
 
 // daily food spending for line chart
-export function dailyFoodSpending(entries, year, month) {
+export function dailyFoodSpending(entries, year, month, budgetAccountId) {
   const daysInMonth = new Date(year, month, 0).getDate();
   return Array.from({ length: daysInMonth }, (_, i) => {
     const day = String(i + 1).padStart(2, "0");
     const date = `${year}-${String(month).padStart(2, "0")}-${day}`;
     const total = entries
-      .filter(e => e.date === date && e.category === BUDGET_CATEGORY && !e.is_income)
+      .filter(e => e.date === date && countsTowardBudget(e, budgetAccountId) && !e.is_income)
       .reduce((sum, e) => sum + e.amount, 0);
     return { day: i + 1, amount: total };
   });
